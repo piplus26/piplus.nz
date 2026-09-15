@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Numeracy Practice — π+</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" type="image/png" href="favicon-circle.png">
+<style>
+  .qcard{background:var(--panel); border:1px solid var(--line); padding:22px 24px; margin-bottom:18px;}
+  .qcard .tag{display:inline-block; font-size:11.5px; letter-spacing:.04em; text-transform:uppercase; color:var(--silver); border:1px solid var(--silver); padding:3px 9px; border-radius:20px; margin-bottom:12px;}
+  .qcard p.prompt{font-size:16px; color:var(--ink); margin:0 0 16px;}
+  .qcard .answer-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .qcard input[type=text]{background:#0E0E0F; border:1px solid var(--line); color:var(--ink); padding:10px 12px; font-size:15px; border-radius:var(--radius); width:160px;}
+  .qcard button{background:var(--gold); color:#0E0E0F; border:none; padding:10px 18px; font-weight:600; font-size:14.5px; border-radius:var(--radius); cursor:pointer;}
+  .qcard button:hover{background:var(--silver);}
+  .feedback{margin-top:14px; font-size:14.5px; padding:10px 14px; border-radius:var(--radius); display:none;}
+  .feedback.correct{background:rgba(122,200,120,0.12); color:#8FD98A; display:block;}
+  .feedback.incorrect{background:rgba(217,110,90,0.12); color:#E38C79; display:block;}
+  .steps{margin-top:12px; padding:14px 16px; background:#0E0E0F; border-left:3px solid var(--gold); font-size:14px; color:var(--muted); display:none;}
+  .steps.show{display:block;}
+  .steps ol{margin:8px 0 0; padding-left:20px;}
+  .steps li{margin-bottom:6px;}
+  #summary{background:var(--panel); border:1px solid var(--gold); padding:22px 24px; margin-top:28px;}
+  #summary h3{font-size:18px; margin-bottom:14px;}
+  .skill-row{display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-top:1px solid var(--line); font-size:14.5px;}
+  .skill-row:first-of-type{border-top:none;}
+  .bar-bg{background:#0E0E0F; border-radius:20px; height:8px; width:140px; overflow:hidden;}
+  .bar-fill{background:var(--gold); height:100%; border-radius:20px;}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="topbar">
+    <div class="brand"><a href="index.html"><img src="logo-header-circle.png" alt="π+ logo" class="logo-img"></a></div>
+    <nav class="primary">
+      <a href="index.html">Home</a>
+      <a href="numeracy.html" class="active">Numeracy</a>
+      <a href="junior-maths.html">Junior Maths</a>
+      <a href="senior-maths.html">Senior Maths</a>
+      <a href="working-out.html">The Working Out</a>
+      <a href="about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="page-banner">
+  <div class="wrap">
+    <div class="eyebrow"><a href="numeracy.html">← Numeracy</a></div>
+    <h1>Numeracy Practice — Set 1</h1>
+    <p>Answer each question, then click Check. Get it wrong and the worked solution shows up right there — no need to go looking for it.</p>
+  </div>
+</section>
+
+<section class="content">
+  <div class="wrap" style="max-width:720px;">
+    <div id="questions"></div>
+    <div id="summary" style="display:none;">
+      <h3>Your skills, by strand</h3>
+      <div id="skill-breakdown"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-row">
+    <div>© π+ — free NZ maths resources · <a href="mailto:piplusnz@gmail.com" style="color:var(--gold);">piplusnz@gmail.com</a></div>
+  </div>
+</footer>
+
+<script>
+const questions = [
+  {
+    id: 'q1',
+    skill: 'Number',
+    prompt: 'A pair of shoes costs $85. In a sale, the price is reduced by 20%. What is the sale price?',
+    accept: ['68'],
+    tolerance: 0,
+    steps: [
+      '20% of $85 = 0.20 × 85 = $17',
+      'Sale price = original price − discount = 85 − 17',
+      'Sale price = $68'
+    ]
+  },
+  {
+    id: 'q2',
+    skill: 'Measurement & Geometry',
+    prompt: 'A rectangular garden is 6m long and 3.5m wide. What is its area, in m²?',
+    accept: ['21'],
+    tolerance: 0.1,
+    steps: [
+      'Area of a rectangle = length × width',
+      'Area = 6 × 3.5',
+      'Area = 21 m²'
+    ]
+  },
+  {
+    id: 'q3',
+    skill: 'Statistics & Probability',
+    prompt: 'A bag has 4 red balls and 6 blue balls. What is the probability of picking a red ball, as a fraction?',
+    accept: ['2/5', '0.4'],
+    tolerance: 0.01,
+    steps: [
+      'Total balls = 4 + 6 = 10',
+      'Probability = favourable outcomes ÷ total outcomes = 4/10',
+      'Simplify: 4/10 = 2/5 (or 0.4)'
+    ]
+  },
+  {
+    id: 'q4',
+    skill: 'Algebra',
+    prompt: 'A plumber charges a $45 call-out fee plus $30 per hour. Using the formula C = 45 + 30h, what is the cost for a 3-hour job?',
+    accept: ['135'],
+    tolerance: 0,
+    steps: [
+      'Substitute h = 3 into C = 45 + 30h',
+      'C = 45 + 30(3) = 45 + 90',
+      'C = $135'
+    ]
+  },
+  {
+    id: 'q5',
+    skill: 'Number',
+    prompt: 'Round 4,287 to the nearest hundred.',
+    accept: ['4300'],
+    tolerance: 0,
+    steps: [
+      'Look at the tens digit to decide rounding direction: 4,2[8]7',
+      '8 is 5 or more, so round the hundreds digit up',
+      '4,287 rounds to 4,300'
+    ]
+  },
+  {
+    id: 'q6',
+    skill: 'Statistics & Probability',
+    prompt: 'The average (mean) of 5 test scores is 74. What is the total of all 5 scores?',
+    accept: ['370'],
+    tolerance: 0,
+    steps: [
+      'Mean = total ÷ number of scores',
+      '74 = total ÷ 5',
+      'Total = 74 × 5 = 370'
+    ]
+  }
+];
+
+const results = {};
+
+function normalise(str){
+  return str.trim().toLowerCase().replace(/\$/g, '').replace(/,/g, '');
+}
+
+function checkAnswer(q, given){
+  const g = normalise(given);
+  for (const a of q.accept){
+    const acceptNorm = normalise(a);
+    const num = parseFloat(g);
+    const acceptNum = parseFloat(acceptNorm);
+    if (!isNaN(num) && !isNaN(acceptNum) && q.tolerance !== undefined){
+      if (Math.abs(num - acceptNum) <= q.tolerance) return true;
+    }
+    if (g === acceptNorm) return true;
+  }
+  return false;
+}
+
+function render(){
+  const container = document.getElementById('questions');
+  questions.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="tag">${q.skill}</div>
+      <p class="prompt"><strong>Q${i+1}.</strong> ${q.prompt}</p>
+      <div class="answer-row">
+        <input type="text" id="input-${q.id}" placeholder="Your answer">
+        <button onclick="submitAnswer('${q.id}')">Check</button>
+      </div>
+      <div class="feedback" id="feedback-${q.id}"></div>
+      <div class="steps" id="steps-${q.id}">
+        <strong>Worked solution:</strong>
+        <ol>${q.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function submitAnswer(id){
+  const q = questions.find(q => q.id === id);
+  const input = document.getElementById(`input-${id}`);
+  const feedback = document.getElementById(`feedback-${id}`);
+  const steps = document.getElementById(`steps-${id}`);
+  const correct = checkAnswer(q, input.value);
+
+  results[id] = correct;
+
+  if (correct){
+    feedback.className = 'feedback correct';
+    feedback.textContent = "That's correct!";
+    steps.classList.remove('show');
+  } else {
+    feedback.className = 'feedback incorrect';
+    feedback.textContent = "Not quite — here's how to get there:";
+    steps.classList.add('show');
+  }
+
+  updateSummary();
+}
+
+function updateSummary(){
+  const answered = Object.keys(results).length;
+  if (answered === 0) return;
+
+  const summary = document.getElementById('summary');
+  summary.style.display = 'block';
+
+  const bySkill = {};
+  questions.forEach(q => {
+    if (!(q.skill in bySkill)) bySkill[q.skill] = {correct: 0, total: 0};
+    if (q.id in results){
+      bySkill[q.skill].total++;
+      if (results[q.id]) bySkill[q.skill].correct++;
+    }
+  });
+
+  const breakdown = document.getElementById('skill-breakdown');
+  breakdown.innerHTML = Object.entries(bySkill).map(([skill, r]) => {
+    const pct = r.total ? Math.round((r.correct / r.total) * 100) : 0;
+    return `
+      <div class="skill-row">
+        <span>${skill} — ${r.correct}/${r.total}</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
+      </div>
+    `;
+  }).join('');
+}
+
+render();
+</script>
+
+</body>
+</html>
